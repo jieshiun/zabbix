@@ -1,0 +1,535 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2022-05-06T03:45:38Z</date>
+    <groups>
+        <group>
+            <name>Customized template</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template SNMPv3 Lenovo XClarity Controller</template>
+            <name>Template SNMPv3 Lenovo XClarity Controller</name>
+            <groups>
+                <group>
+                    <name>Customized template</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>CPU</name>
+                </application>
+                <application>
+                    <name>Disk</name>
+                </application>
+                <application>
+                    <name>Fan</name>
+                </application>
+                <application>
+                    <name>Memory</name>
+                </application>
+                <application>
+                    <name>Power</name>
+                </application>
+                <application>
+                    <name>System Health</name>
+                </application>
+                <application>
+                    <name>Temperature</name>
+                </application>
+                <application>
+                    <name>Voltage</name>
+                </application>
+                <application>
+                    <name>Volume</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>System Health Description</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>.1.3.6.1.4.1.19046.11.1.1.4.2.1.3.1</snmp_oid>
+                    <key>systemHealthSummaryEntry.systemHealthSummaryDescription</key>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <description>System health summary description.</description>
+                    <applications>
+                        <application>
+                            <name>System Health</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>System Health Severity</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>.1.3.6.1.4.1.19046.11.1.1.4.2.1.2.1</snmp_oid>
+                    <key>systemHealthSummaryEntry.systemHealthSummarySeverity</key>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <description>System health summary severity.</description>
+                    <applications>
+                        <application>
+                            <name>System Health</name>
+                        </application>
+                    </applications>
+                </item>
+            </items>
+            <discovery_rules>
+                <discovery_rule>
+                    <name>diskEntry</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>discovery[{#SNMPVALUE},.1.3.6.1.4.1.19046.11.1.1.12.2.1.1]</snmp_oid>
+                    <key>diskEntry.diskIndex</key>
+                    <delay>1h</delay>
+                    <description>This column is used to identify a particular disk module inventory channel.</description>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Disk {#SNMPINDEX} Name</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>.1.3.6.1.4.1.19046.11.1.1.12.2.1.2.{#SNMPINDEX}</snmp_oid>
+                            <key>diskEntry.diskFruName.[{#SNMPINDEX}]</key>
+                            <delay>1d</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <description>disk module FRU name.</description>
+                            <applications>
+                                <application>
+                                    <name>Disk</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Disk {#SNMPINDEX} Status</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>.1.3.6.1.4.1.19046.11.1.1.12.2.1.3.{#SNMPINDEX}</snmp_oid>
+                            <key>diskEntry.diskHealthStatus.[{#SNMPINDEX}]</key>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <description>A description of the disk module status.</description>
+                            <applications>
+                                <application>
+                                    <name>Disk</name>
+                                </application>
+                            </applications>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{last()}&lt;&gt;&quot;Normal&quot;</expression>
+                                    <name>Disk status on {HOSTNAME}: abnormal</name>
+                                    <priority>WARNING</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>fanEntry</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>discovery[{#SNMPVALUE},.1.3.6.1.4.1.19046.11.1.1.3.2.1.1]</snmp_oid>
+                    <key>fanEntry.fanIndex</key>
+                    <delay>1h</delay>
+                    <description>This column is used to identify a particular fan.</description>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Fan {#SNMPINDEX} Description</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>.1.3.6.1.4.1.19046.11.1.1.3.2.1.2.{#SNMPINDEX}</snmp_oid>
+                            <key>fanEntry.fanDescr.[{#SNMPINDEX}]</key>
+                            <delay>1d</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <description>A description of the fan measurement channel.</description>
+                            <applications>
+                                <application>
+                                    <name>Fan</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Fan {#SNMPINDEX} Status</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>.1.3.6.1.4.1.19046.11.1.1.3.2.1.10.{#SNMPINDEX}</snmp_oid>
+                            <key>fanEntry.fanHealthStatus.[{#SNMPINDEX}]</key>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <description>A description of the fan component status.</description>
+                            <applications>
+                                <application>
+                                    <name>Fan</name>
+                                </application>
+                            </applications>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{last()}&lt;&gt;&quot;Normal&quot;</expression>
+                                    <name>Fan status on {HOSTNAME}: abnormal</name>
+                                    <priority>WARNING</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Fan {#SNMPINDEX} Speed</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>.1.3.6.1.4.1.19046.11.1.1.3.2.1.3.{#SNMPINDEX}</snmp_oid>
+                            <key>fanEntry.fanSpeed.[{#SNMPINDEX}]</key>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <description>Fan speed expressed in percent(%) of maximum RPM. An octet string expressed as 'ddd% of maximum' where: d is a decimal digit or blank space for a leading zero. If the fan is determined not to be running or the fan speed cannot be determined, the string will indicate 'Offline'.</description>
+                            <applications>
+                                <application>
+                                    <name>Fan</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>powerEntry</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>discovery[{#SNMPVALUE},.1.3.6.1.4.1.19046.11.1.1.11.2.1.1]</snmp_oid>
+                    <key>powerEntry.powerIndex</key>
+                    <delay>1h</delay>
+                    <description>This column is used to identify a particular power module inventory channel.</description>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Power {#SNMPINDEX} Name</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>.1.3.6.1.4.1.19046.11.1.1.11.2.1.2.{#SNMPINDEX}</snmp_oid>
+                            <key>powerEntry.powerFruName.[{#SNMPINDEX}]</key>
+                            <delay>1d</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Power</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Power {#SNMPINDEX} Status</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>.1.3.6.1.4.1.19046.11.1.1.11.2.1.6.{#SNMPINDEX}</snmp_oid>
+                            <key>powerEntry.powerHealthStatus.[{#SNMPINDEX}]</key>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <description>A description of the power module status.</description>
+                            <applications>
+                                <application>
+                                    <name>Power</name>
+                                </application>
+                            </applications>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{last()}&lt;&gt;&quot;Normal&quot;</expression>
+                                    <name>Power status on {HOSTNAME}: abnormal</name>
+                                    <priority>WARNING</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>raidVolumeEntry</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>discovery[{#SNMPVALUE},.1.3.6.1.4.1.19046.11.1.1.13.1.7.1.1]</snmp_oid>
+                    <key>raidVolumeEntry.raidVolumeIndex</key>
+                    <delay>1h</delay>
+                    <description>This column is used to identify a particular RAID volume.</description>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Volume {#SNMPINDEX} Bootable</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>.1.3.6.1.4.1.19046.11.1.1.13.1.7.1.7.{#SNMPINDEX}</snmp_oid>
+                            <key>raidVolumeEntry.raidVolumeBootable.[{#SNMPINDEX}]</key>
+                            <delay>1d</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <description>Whether the RAID volume is bootable.</description>
+                            <applications>
+                                <application>
+                                    <name>Volume</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Volume {#SNMPINDEX} Capacity</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>.1.3.6.1.4.1.19046.11.1.1.13.1.7.1.5.{#SNMPINDEX}</snmp_oid>
+                            <key>raidVolumeEntry.raidVolumeCapacity.[{#SNMPINDEX}]</key>
+                            <delay>1d</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <description>The Capacity of a particular RAID volume.</description>
+                            <applications>
+                                <application>
+                                    <name>Volume</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Volume {#SNMPINDEX} Name</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>.1.3.6.1.4.1.19046.11.1.1.13.1.7.1.2.{#SNMPINDEX}</snmp_oid>
+                            <key>raidVolumeEntry.raidVolumeName.[{#SNMPINDEX}]</key>
+                            <delay>1d</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <description>The Name of a particular RAID volume.</description>
+                            <applications>
+                                <application>
+                                    <name>Volume</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Volume {#SNMPINDEX} Status</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>.1.3.6.1.4.1.19046.11.1.1.13.1.7.1.4.{#SNMPINDEX}</snmp_oid>
+                            <key>raidVolumeEntry.raidVolumeStatus.[{#SNMPINDEX}]</key>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <description>The Status of a particular RAID volume.</description>
+                            <applications>
+                                <application>
+                                    <name>Volume</name>
+                                </application>
+                            </applications>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{last()}&lt;&gt;&quot;Optimal&quot;</expression>
+                                    <name>Volume status on {HOSTNAME}: abnormal</name>
+                                    <priority>WARNING</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Volume {#SNMPINDEX} Strip Size</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>.1.3.6.1.4.1.19046.11.1.1.13.1.7.1.6.{#SNMPINDEX}</snmp_oid>
+                            <key>raidVolumeEntry.raidVolumeStripSize.[{#SNMPINDEX}]</key>
+                            <delay>1d</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <description>The strip size of the RAID volume.</description>
+                            <applications>
+                                <application>
+                                    <name>Volume</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>systemCPUVpdEntry</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>discovery[{#SNMPVALUE},.1.3.6.1.4.1.19046.11.1.1.5.20.1.1]</snmp_oid>
+                    <key>systemCPUVpdEntry.cpuVpdIndex</key>
+                    <delay>1h</delay>
+                    <description>&quot;System CPU level VPD index. View as a table and not as individual entries for consistent results.&quot;</description>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>CPU {#SNMPINDEX} Model</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>.1.3.6.1.4.1.19046.11.1.1.5.20.1.12.{#SNMPINDEX}</snmp_oid>
+                            <key>systemCPUVpdEntry.cpuVpdCpuModel.[{#SNMPINDEX}]</key>
+                            <delay>1d</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <description>System cpu model. View as a table and not as individual entries for consistent results.</description>
+                            <applications>
+                                <application>
+                                    <name>CPU</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>CPU {#SNMPINDEX} Status</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>.1.3.6.1.4.1.19046.11.1.1.5.20.1.11.{#SNMPINDEX}</snmp_oid>
+                            <key>systemCPUVpdEntry.cpuVpdHealthStatus.[{#SNMPINDEX}]</key>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <description>System cpu health status. View as a table and not as individual entries for consistent results.</description>
+                            <applications>
+                                <application>
+                                    <name>CPU</name>
+                                </application>
+                            </applications>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{last()}&lt;&gt;&quot;Normal&quot;</expression>
+                                    <name>CPU status on {HOSTNAME}: abnormal</name>
+                                    <priority>WARNING</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>systemMemoryVpdEntry</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>discovery[{#SNMPVALUE},.1.3.6.1.4.1.19046.11.1.1.5.21.1.1]</snmp_oid>
+                    <key>systemMemoryVpdEntry.memoryVpdIndex</key>
+                    <delay>1h</delay>
+                    <description>System Memory level VPD index. View as a table and not as individual entries for consistent results.</description>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Memory {#SNMPINDEX} Status</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>.1.3.6.1.4.1.19046.11.1.1.5.21.1.8.{#SNMPINDEX}</snmp_oid>
+                            <key>systemMemoryVpdEntry.memoryHealthStatus.[{#SNMPINDEX}]</key>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <description>A description of the memory component status.</description>
+                            <applications>
+                                <application>
+                                    <name>Memory</name>
+                                </application>
+                            </applications>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{last()}&lt;&gt;&quot;Normal&quot;</expression>
+                                    <name>Memory status on {HOSTNAME}: abnormal</name>
+                                    <priority>WARNING</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Memory {#SNMPINDEX} Description</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>.1.3.6.1.4.1.19046.11.1.1.5.21.1.2.{#SNMPINDEX}</snmp_oid>
+                            <key>systemMemoryVpdEntry.memoryVpdDescription.[{#SNMPINDEX}]</key>
+                            <delay>1d</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <description>System memory Description (e.g. DIMM 1). View as a table and not as individual entries for consistent results.</description>
+                            <applications>
+                                <application>
+                                    <name>Memory</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>tempEntry</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>discovery[{#SNMPVALUE},.1.3.6.1.4.1.19046.11.1.1.1.2.1.1]</snmp_oid>
+                    <key>tempEntry.tempIndex</key>
+                    <delay>1h</delay>
+                    <description>This column is used to identify a particular temperature measurement channel.</description>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Temperature {#SNMPINDEX} Description</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>.1.3.6.1.4.1.19046.11.1.1.1.2.1.2.{#SNMPINDEX}</snmp_oid>
+                            <key>tempEntry.tempDescr.[{#SNMPINDEX}]</key>
+                            <delay>1d</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <description>A description of the temperature measurement channel.</description>
+                            <applications>
+                                <application>
+                                    <name>Temperature</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Temperature {#SNMPINDEX} Status</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>.1.3.6.1.4.1.19046.11.1.1.1.2.1.11.{#SNMPINDEX}</snmp_oid>
+                            <key>tempEntry.tempHealthStatus.[{#SNMPINDEX}]</key>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <description>A description of the temperature component status.</description>
+                            <applications>
+                                <application>
+                                    <name>Temperature</name>
+                                </application>
+                            </applications>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{last()}&lt;&gt;&quot;Normal&quot;</expression>
+                                    <name>Temperature status on {HOSTNAME}: abnormal</name>
+                                    <priority>WARNING</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Temperature {#SNMPINDEX} Reading</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>.1.3.6.1.4.1.19046.11.1.1.1.2.1.3.{#SNMPINDEX}</snmp_oid>
+                            <key>tempEntry.tempReading.[{#SNMPINDEX}]</key>
+                            <units>C</units>
+                            <description>The measured temperature.</description>
+                            <applications>
+                                <application>
+                                    <name>Temperature</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>voltEntry</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>discovery[{#SNMPVALUE},.1.3.6.1.4.1.19046.11.1.1.2.2.1.1]</snmp_oid>
+                    <key>voltEntry.voltIndex</key>
+                    <delay>1h</delay>
+                    <description>This column is used to identify a particular voltage measurement channel.</description>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Voltage {#SNMPINDEX} Description</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>.1.3.6.1.4.1.19046.11.1.1.2.2.1.2.{#SNMPINDEX}</snmp_oid>
+                            <key>voltEntry.voltDescr.[{#SNMPINDEX}]</key>
+                            <delay>1d</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <description>A description of the voltage measurement channel.</description>
+                            <applications>
+                                <application>
+                                    <name>Voltage</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Voltage {#SNMPINDEX} Status</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>.1.3.6.1.4.1.19046.11.1.1.2.2.1.11.{#SNMPINDEX}</snmp_oid>
+                            <key>voltEntry.voltHealthStatus.[{#SNMPINDEX}]</key>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <description>A description of the voltage component status.</description>
+                            <applications>
+                                <application>
+                                    <name>Voltage</name>
+                                </application>
+                            </applications>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{last()}&lt;&gt;&quot;Normal&quot;</expression>
+                                    <name>Voltage status on {HOSTNAME}: abnormal</name>
+                                    <priority>WARNING</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Voltage {#SNMPINDEX} Reading</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>.1.3.6.1.4.1.19046.11.1.1.2.2.1.3.{#SNMPINDEX}</snmp_oid>
+                            <key>voltEntry.voltReading.[{#SNMPINDEX}]</key>
+                            <value_type>FLOAT</value_type>
+                            <units>V</units>
+                            <description>The measured voltage.</description>
+                            <applications>
+                                <application>
+                                    <name>Voltage</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+            </discovery_rules>
+        </template>
+    </templates>
+</zabbix_export>
