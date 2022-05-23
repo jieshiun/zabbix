@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2022-05-23T02:03:23Z</date>
+    <groups>
+        <group>
+            <name>Customized template</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template Eliwell Temperature Control by HTTP</template>
+            <name>Template Eliwell Temperature Control by HTTP</name>
+            <groups>
+                <group>
+                    <name>Customized template</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>Temperature</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>Refrigerator Items</name>
+                    <type>HTTP_AGENT</type>
+                    <key>xml.monitor.refrigerator.room</key>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <authtype>BASIC</authtype>
+                    <username>{$REFRIGERATOR.USERNAME}</username>
+                    <password>{$REFRIGERATOR.PASSWORD}</password>
+                    <applications>
+                        <application>
+                            <name>Temperature</name>
+                        </application>
+                    </applications>
+                    <url>http://{HOST.IP}/index.cgx</url>
+                </item>
+                <item>
+                    <name>Room 1 Temperature</name>
+                    <type>DEPENDENT</type>
+                    <key>xml.monitor.refrigerator.room.1</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>C</units>
+                    <applications>
+                        <application>
+                            <name>Temperature</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>XMLPATH</type>
+                            <params>number(/form/text[1]/value)</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>xml.monitor.refrigerator.room</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(5)}&gt;{$REFRIGERATOR.TEMP.MAX.WARN}</expression>
+                            <name>Room 1 Temperature is high (temp &gt; {$REFRIGERATOR.TEMP.MAX.WARN} C for 5m)</name>
+                            <priority>WARNING</priority>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(5)}&lt;{$REFRIGERATOR.TEMP.MIN.WARN}</expression>
+                            <name>Room 1 Temperature is low (temp &lt; {$REFRIGERATOR.TEMP.MIN.WARN} C for 5m)</name>
+                            <priority>WARNING</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Room 2 Temperature</name>
+                    <type>DEPENDENT</type>
+                    <key>xml.monitor.refrigerator.room.2</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>C</units>
+                    <applications>
+                        <application>
+                            <name>Temperature</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>XMLPATH</type>
+                            <params>number(/form/text[2]/value)</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>xml.monitor.refrigerator.room</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(5)}&gt;{$REFRIGERATOR.TEMP.MAX.WARN}</expression>
+                            <name>Room 2 Temperature is high (temp &gt; {$REFRIGERATOR.TEMP.MAX.WARN} C for 5m)</name>
+                            <priority>WARNING</priority>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(5)}&lt;{$REFRIGERATOR.TEMP.MIN.WARN}</expression>
+                            <name>Room 2 Temperature is low (temp &lt; {$REFRIGERATOR.TEMP.MIN.WARN} C for 5m)</name>
+                            <priority>WARNING</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Room 3 Temperature</name>
+                    <type>DEPENDENT</type>
+                    <key>xml.monitor.refrigerator.room.3</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>C</units>
+                    <applications>
+                        <application>
+                            <name>Temperature</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>XMLPATH</type>
+                            <params>number(/form/text[3]/value)</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>xml.monitor.refrigerator.room</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(5)}&gt;{$REFRIGERATOR.TEMP.MAX.WARN}</expression>
+                            <name>Room 3 Temperature is high (temp &gt; {$REFRIGERATOR.TEMP.MAX.WARN} C for 5m)</name>
+                            <priority>WARNING</priority>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(5)}&lt;{$REFRIGERATOR.TEMP.MIN.WARN}</expression>
+                            <name>Room 3 Temperature is low (temp &lt; {$REFRIGERATOR.TEMP.MIN.WARN} C for 5m)</name>
+                            <priority>WARNING</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Room 4 Temperature</name>
+                    <type>DEPENDENT</type>
+                    <key>xml.monitor.refrigerator.room.4</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>C</units>
+                    <applications>
+                        <application>
+                            <name>Temperature</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>XMLPATH</type>
+                            <params>number(/form/text[4]/value)</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>xml.monitor.refrigerator.room</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(5)}&gt;{$REFRIGERATOR.TEMP.MAX.WARN}</expression>
+                            <name>Room 4 Temperature is high (temp &gt; {$REFRIGERATOR.TEMP.MAX.WARN} C for 5m)</name>
+                            <priority>WARNING</priority>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(5)}&lt;{$REFRIGERATOR.TEMP.MIN.WARN}</expression>
+                            <name>Room 4 Temperature is low (temp &lt; {$REFRIGERATOR.TEMP.MIN.WARN} C for 5m)</name>
+                            <priority>WARNING</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+            </items>
+            <macros>
+                <macro>
+                    <macro>{$REFRIGERATOR.PASSWORD}</macro>
+                    <value>your_password</value>
+                </macro>
+                <macro>
+                    <macro>{$REFRIGERATOR.TEMP.MAX.WARN}</macro>
+                    <value>8</value>
+                </macro>
+                <macro>
+                    <macro>{$REFRIGERATOR.TEMP.MIN.WARN}</macro>
+                    <value>2</value>
+                </macro>
+                <macro>
+                    <macro>{$REFRIGERATOR.USERNAME}</macro>
+                    <value>your_account</value>
+                </macro>
+            </macros>
+        </template>
+    </templates>
+</zabbix_export>
