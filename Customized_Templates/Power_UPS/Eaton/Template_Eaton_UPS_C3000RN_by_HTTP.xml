@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2022-05-24T07:23:16Z</date>
+    <groups>
+        <group>
+            <name>Customized template</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template Eaton UPS C3000RN by HTTP</template>
+            <name>Template Eaton UPS C3000RN by HTTP</name>
+            <groups>
+                <group>
+                    <name>Customized template</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>Input</name>
+                </application>
+                <application>
+                    <name>Output</name>
+                </application>
+                <application>
+                    <name>Status</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>UPS Items</name>
+                    <type>HTTP_AGENT</type>
+                    <key>json.monitor.winpower</key>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <url>https://{HOST.IP}:8888/0/json</url>
+                </item>
+                <item>
+                    <name>Battery Capacity</name>
+                    <type>DEPENDENT</type>
+                    <key>json.monitor.winpower.batCapacity</key>
+                    <delay>0</delay>
+                    <units>%</units>
+                    <applications>
+                        <application>
+                            <name>Status</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.body.batCapacity</params>
+                        </step>
+                        <step>
+                            <type>TRIM</type>
+                            <params>%</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>json.monitor.winpower</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&lt;{$UPS.CAP.MAX.WARN}</expression>
+                            <name>Battery capacity is low (capacity &lt; {$UPS.CAP.MAX.WARN} %)</name>
+                            <priority>WARNING</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Battery Time Reference</name>
+                    <type>DEPENDENT</type>
+                    <key>json.monitor.winpower.batTimeReference</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>Status</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <params>if(value &gt; 90)
+	timeReference = 5;
+else if(value &gt; 80)
+	timeReference = 5.5;
+else if(value &gt; 70)
+	timeReference = 7;
+else if(value &gt; 60)
+	timeReference = 8;
+else if(value &gt; 50)
+	timeReference = 10;
+else if(value &gt; 40)
+	timeReference = 15;
+else if(value &gt; 30)
+	timeReference = 20;
+else if(value &gt; 20)
+	timeReference = 29;
+else if(value &gt; 10)
+	timeReference = 45;
+else
+	timeReference = 90;
+
+return timeReference;</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>json.monitor.winpower.loadPercent</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Battery Time Remain</name>
+                    <type>CALCULATED</type>
+                    <key>json.monitor.winpower.batTimeRemain</key>
+                    <value_type>FLOAT</value_type>
+                    <params>last(json.monitor.winpower.batCapacity)/100*last(json.monitor.winpower.batTimeReference)</params>
+                    <applications>
+                        <application>
+                            <name>Status</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Battery Volt</name>
+                    <type>DEPENDENT</type>
+                    <key>json.monitor.winpower.batV</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>V</units>
+                    <applications>
+                        <application>
+                            <name>Status</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.body.batV</params>
+                        </step>
+                        <step>
+                            <type>TRIM</type>
+                            <params>V</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>json.monitor.winpower</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Input Frequency</name>
+                    <type>DEPENDENT</type>
+                    <key>json.monitor.winpower.inFreq</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>Hz</units>
+                    <applications>
+                        <application>
+                            <name>Input</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.body.inFreq</params>
+                        </step>
+                        <step>
+                            <type>TRIM</type>
+                            <params>Hz</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>json.monitor.winpower</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Input Volt</name>
+                    <type>DEPENDENT</type>
+                    <key>json.monitor.winpower.inVolt</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>V</units>
+                    <applications>
+                        <application>
+                            <name>Input</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.body.inVolt</params>
+                        </step>
+                        <step>
+                            <type>TRIM</type>
+                            <params>V</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>json.monitor.winpower</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Load Percent</name>
+                    <type>DEPENDENT</type>
+                    <key>json.monitor.winpower.loadPercent</key>
+                    <delay>0</delay>
+                    <units>%</units>
+                    <applications>
+                        <application>
+                            <name>Output</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.body.loadPercent</params>
+                        </step>
+                        <step>
+                            <type>TRIM</type>
+                            <params>%</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>json.monitor.winpower</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Load Percent Max</name>
+                    <type>DEPENDENT</type>
+                    <key>json.monitor.winpower.loadPercentMax</key>
+                    <delay>0</delay>
+                    <units>%</units>
+                    <applications>
+                        <application>
+                            <name>Output</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.body.loadPercentMax</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>json.monitor.winpower</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Output Volt</name>
+                    <type>DEPENDENT</type>
+                    <key>json.monitor.winpower.outVolt</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>V</units>
+                    <applications>
+                        <application>
+                            <name>Output</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.body.outVolt</params>
+                        </step>
+                        <step>
+                            <type>TRIM</type>
+                            <params>V</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>json.monitor.winpower</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Status</name>
+                    <type>DEPENDENT</type>
+                    <key>json.monitor.winpower.status</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>Status</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.body.status</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>json.monitor.winpower</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&lt;&gt;&quot;Normal&quot;</expression>
+                            <name>Status is abnormal</name>
+                            <priority>WARNING</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Temperature</name>
+                    <type>DEPENDENT</type>
+                    <key>json.monitor.winpower.upsTemp</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>C</units>
+                    <applications>
+                        <application>
+                            <name>Status</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.body.upsTemp</params>
+                        </step>
+                        <step>
+                            <type>TRIM</type>
+                            <params>C</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>json.monitor.winpower</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&gt;{$UPS.TEMP.MAX.WARN}</expression>
+                            <name>Temperature is high (temp &gt; {$UPS.TEMP.MAX.WARN} C)</name>
+                            <priority>WARNING</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+            </items>
+            <macros>
+                <macro>
+                    <macro>{$UPS.CAP.MAX.WARN}</macro>
+                    <value>80</value>
+                </macro>
+                <macro>
+                    <macro>{$UPS.TEMP.MAX.WARN}</macro>
+                    <value>40</value>
+                </macro>
+            </macros>
+        </template>
+    </templates>
+</zabbix_export>
