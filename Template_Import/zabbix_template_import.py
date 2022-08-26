@@ -52,17 +52,16 @@ try:
     # Set import parameters, including template file content
     # https://www.zabbix.com/documentation/6.0/en/manual/api/reference/configuration/import
     params = {'format': 'yaml',
-              'rules': {'groups': {'createMissing': True},
-                        'hosts': {'createMissing': True, 'updateExisting': True},
-                        'items': {'createMissing': True, 'updateExisting': True},
+              'rules': {'groups': {'createMissing': True, 'updateExisting': True},
                         'templates': {'createMissing': True, 'updateExisting': True},
-                        'templateLinkage': {'createMissing': True},
-                        'discoveryRules': {'createMissing': True, 'updateExisting': True},
-                        'triggers': {'createMissing': True, 'updateExisting': True},
-                        'graphs': {'createMissing': True, 'updateExisting': True},
-                        'valueMaps': {'createMissing': True},
-                        'images': {'createMissing': True, 'updateExisting': True},
-                        'maps': {'createMissing': True, 'updateExisting': True},
+                        'valueMaps': {'createMissing': True, 'updateExisting': True, 'deleteMissing': True },
+                        'templateDashboards': {'createMissing': True, 'updateExisting': True, 'deleteMissing': True },
+                        'templateLinkage': {'createMissing': True, 'deleteMissing': True },
+                        'items': {'createMissing': True, 'updateExisting': True, 'deleteMissing': True },
+                        'discoveryRules': {'createMissing': True, 'updateExisting': True, 'deleteMissing': True },
+                        'triggers': {'createMissing': True, 'updateExisting': True, 'deleteMissing': True },
+                        'graphs': {'createMissing': True, 'updateExisting': True, 'deleteMissing': True },
+                        'httptests': {'createMissing': True, 'updateExisting': True, 'deleteMissing': True },
                         },
               'source': source
               }
@@ -78,7 +77,7 @@ try:
     exit_code = 0
 
 except Exception as e:
-
+   print(args.template_file)
    print(str(e), file=sys.stderr)
    exit_code=1
 
