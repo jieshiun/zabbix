@@ -1,0 +1,157 @@
+zabbix_export:
+  version: '6.0'
+  date: '2022-11-15T01:53:35Z'
+  groups:
+    -
+      uuid: 009d29fc0b014ef68562790e73006936
+      name: 'Customized template'
+  templates:
+    -
+      uuid: c293a890dadf43c699a6b96019d8f4e9
+      template: 'Template Asustor NAS'
+      name: 'Template Asustor NAS'
+      groups:
+        -
+          name: 'Customized template'
+      items:
+        -
+          uuid: 1063d341c6364fffb405b9658746200f
+          name: 'System Temperature'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.44738.2.2.0
+          key: asustorHardware.hwSysTemperature
+          units: C
+          tags:
+            -
+              tag: System
+          triggers:
+            -
+              uuid: 8f73f14fb1bc48eba8b2675ea48d39c9
+              expression: 'avg(/Template Asustor NAS/asustorHardware.hwSysTemperature,#4)>50'
+              name: 'System temperature'
+              priority: WARNING
+      discovery_rules:
+        -
+          uuid: b5a36db35e21492faf952ec5da15063c
+          name: 'Asustor Disk(s)'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#SNMPVALUE},.1.3.6.1.4.1.44738.4.1.1.2]'
+          key: asustorDisk.diskTable.diskEntry.diskIndex
+          delay: 3m
+          item_prototypes:
+            -
+              uuid: 09b43a86a2c84a6c83b077cec6378635
+              name: '{#SNMPVALUE} Model'
+              type: SNMP_AGENT
+              snmp_oid: '.1.3.6.1.4.1.44738.4.1.1.3.{#SNMPINDEX}'
+              key: 'asustorDisk.diskTable.diskEntry.diskModel.[{#SNMPINDEX}]'
+              delay: 1d
+              trends: '0'
+              value_type: TEXT
+              tags:
+                -
+                  tag: Application
+                  value: 'Asustor Disk'
+              trigger_prototypes:
+                -
+                  uuid: 7604f8902cf041c4b14bf9d88deac3cb
+                  expression: '(last(/Template Asustor NAS/asustorDisk.diskTable.diskEntry.diskModel.[{#SNMPINDEX}],#1)<>last(/Template Asustor NAS/asustorDisk.diskTable.diskEntry.diskModel.[{#SNMPINDEX}],#2))>0'
+                  name: '{#SNMPVALUE} was changed'
+                  priority: INFO
+            -
+              uuid: 5ed31eb59bd54c2892f1a732a0dfd2b4
+              name: '{#SNMPVALUE} Status'
+              type: SNMP_AGENT
+              snmp_oid: '.1.3.6.1.4.1.44738.4.1.1.5.{#SNMPINDEX}'
+              key: 'asustorDisk.diskTable.diskEntry.diskStatus.[{#SNMPINDEX}]'
+              trends: '0'
+              value_type: TEXT
+              tags:
+                -
+                  tag: Application
+                  value: 'Asustor Disk'
+              trigger_prototypes:
+                -
+                  uuid: 0a64884e585a402b94f639113826ed57
+                  expression: 'last(/Template Asustor NAS/asustorDisk.diskTable.diskEntry.diskStatus.[{#SNMPINDEX}])<>"Healthy"'
+                  name: '{#SNMPVALUE} disk unhealthy'
+                  priority: HIGH
+                  description: 'The disk is unhealthy'
+            -
+              uuid: 1a858cf530514c84a430ed62912fff70
+              name: '{#SNMPVALUE} Temperature'
+              type: SNMP_AGENT
+              snmp_oid: '.1.3.6.1.4.1.44738.4.1.1.6.{#SNMPINDEX}'
+              key: 'asustorDisk.diskTable.diskEntry.diskTemperature.[{#SNMPINDEX}]'
+              units: C
+              tags:
+                -
+                  tag: Application
+                  value: 'Asustor Disk'
+              trigger_prototypes:
+                -
+                  uuid: f9db57cd8a0343fea6b1cf27ec474ea6
+                  expression: 'avg(/Template Asustor NAS/asustorDisk.diskTable.diskEntry.diskTemperature.[{#SNMPINDEX}],#4)>60'
+                  name: '{#SNMPVALUE} temperature'
+                  priority: WARNING
+            -
+              uuid: b13907e266a34593abd53dad933b1756
+              name: '{#SNMPVALUE} Type'
+              type: SNMP_AGENT
+              snmp_oid: '.1.3.6.1.4.1.44738.4.1.1.4.{#SNMPINDEX}'
+              key: 'asustorDisk.diskTable.diskEntry.diskType.[{#SNMPINDEX}]'
+              delay: 1d
+              trends: '0'
+              value_type: TEXT
+              tags:
+                -
+                  tag: Application
+                  value: 'Asustor Disk'
+        -
+          uuid: 7c534bd69b2a4aa7ae931fbc0abeabcf
+          name: 'Asustor RAID Volume(s)'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#SNMPVALUE},.1.3.6.1.4.1.44738.5.1.1.1]'
+          key: asustorRaid.raidTable.raidEntry
+          delay: 3m
+          item_prototypes:
+            -
+              uuid: 9cf4d7d7e0c64627b6f257f24daf31da
+              name: '{#SNMPVALUE} Volume Name'
+              type: SNMP_AGENT
+              snmp_oid: '.1.3.6.1.4.1.44738.5.1.1.2.{#SNMPINDEX}'
+              key: 'asustorVolume.volumeTable.volumeEntry.volumeName.[{#SNMPINDEX}]'
+              delay: 1d
+              trends: '0'
+              value_type: TEXT
+              description: 'Asustor raid name: the name of each raid will be showed here.'
+              tags:
+                -
+                  tag: Application
+                  value: 'Asustor Volume'
+            -
+              uuid: 6c3e7c0a57c842fe9a5d2a5560dceeab
+              name: '{#SNMPVALUE} Volume Status'
+              type: SNMP_AGENT
+              snmp_oid: '.1.3.6.1.4.1.44738.5.1.1.4.{#SNMPINDEX}'
+              key: 'asustorVolume.volumeTable.volumeEntry.volumeStatus.[{#SNMPINDEX}]'
+              delay: 3m
+              trends: '0'
+              value_type: TEXT
+              tags:
+                -
+                  tag: Application
+                  value: 'Asustor Volume'
+              trigger_prototypes:
+                -
+                  uuid: 7c681f8f40634a55ba795206180bd2ce
+                  expression: 'last(/Template Asustor NAS/asustorVolume.volumeTable.volumeEntry.volumeStatus.[{#SNMPINDEX}])<>"healthy"'
+                  name: 'Volume status on {HOSTNAME}: unhealthy'
+                  priority: HIGH
+      macros:
+        -
+          macro: '{$DISK_UTIL_HIGH}'
+          value: '90'
+        -
+          macro: '{$DISK_UTIL_WARN}'
+          value: '80'
