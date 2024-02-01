@@ -1,0 +1,299 @@
+zabbix_export:
+  version: '6.0'
+  date: '2024-02-01T09:52:07Z'
+  groups:
+    -
+      uuid: 009d29fc0b014ef68562790e73006936
+      name: 'Customized template'
+  templates:
+    -
+      uuid: 888bfa1918a04d5aba545c69272cb2b5
+      template: 'Template ViewPower by HTTP'
+      name: 'Template ViewPower by HTTP'
+      groups:
+        -
+          name: 'Customized template'
+      items:
+        -
+          uuid: b2c009b777e445bcb45510255e194cda
+          name: Workstatus
+          type: HTTP_AGENT
+          key: viewpower.workstatus
+          trends: '0'
+          value_type: TEXT
+          url: 'http://{HOST.IP}:{$UPS.PORT}/ViewPower/workstatus/reqMonitorData'
+        -
+          uuid: 27bc40b884064b80bd878842123c9104
+          name: Version
+          type: DEPENDENT
+          key: viewpower.workstatus.version
+          delay: '0'
+          trends: '0'
+          value_type: TEXT
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.version
+          master_item:
+            key: viewpower.workstatus
+        -
+          uuid: 551a84ad008a4635932479f577046bb2
+          name: 'Battery Capacity'
+          type: DEPENDENT
+          key: viewpower.workstatus.workInfo.batteryCapacity
+          delay: '0'
+          units: '%'
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.workInfo.batteryCapacity
+          master_item:
+            key: viewpower.workstatus
+          tags:
+            -
+              tag: Component
+              value: Battery
+          triggers:
+            -
+              uuid: 16782d2a45644066af2cf405afe3a6ed
+              expression: 'last(/Template ViewPower by HTTP/viewpower.workstatus.workInfo.batteryCapacity)<{$UPS.CAP.MAX.WARN}'
+              name: 'Battery capacity is low (capacity < {$UPS.CAP.MAX.WARN} %)'
+              priority: WARNING
+        -
+          uuid: bf1c9dcce2ec420eb54be95979ccb0f4
+          name: 'Battery Remain Time'
+          type: DEPENDENT
+          key: viewpower.workstatus.workInfo.batteryRemainTime
+          delay: '0'
+          units: m
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.workInfo.batteryRemainTime
+          master_item:
+            key: viewpower.workstatus
+          tags:
+            -
+              tag: Component
+              value: Battery
+        -
+          uuid: f2ac47f77a864f6b814364360880248b
+          name: 'Battery Voltage'
+          type: DEPENDENT
+          key: viewpower.workstatus.workInfo.batteryVoltage
+          delay: '0'
+          value_type: FLOAT
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.workInfo.batteryVoltage
+          master_item:
+            key: viewpower.workstatus
+          tags:
+            -
+              tag: Component
+              value: Battery
+        -
+          uuid: cae0491f1c114e798383827c9b0b2ac6
+          name: 'Bypass Active'
+          type: DEPENDENT
+          key: viewpower.workstatus.workInfo.bypassActive
+          delay: '0'
+          trends: '0'
+          value_type: TEXT
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.workInfo.bypassActive
+          master_item:
+            key: viewpower.workstatus
+          tags:
+            -
+              tag: Component
+              value: UPS
+        -
+          uuid: 5820b07813e44e65974c3d07aec5ee81
+          name: 'Input Frequency'
+          type: DEPENDENT
+          key: viewpower.workstatus.workInfo.inputFrequency
+          delay: '0'
+          value_type: FLOAT
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.workInfo.inputFrequency
+          master_item:
+            key: viewpower.workstatus
+          tags:
+            -
+              tag: Component
+              value: Input
+        -
+          uuid: fc54be1e9e154be3923bf9102d5eefc0
+          name: 'Input Voltage'
+          type: DEPENDENT
+          key: viewpower.workstatus.workInfo.inputVoltage
+          delay: '0'
+          value_type: FLOAT
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.workInfo.inputVoltage
+          master_item:
+            key: viewpower.workstatus
+          tags:
+            -
+              tag: Component
+              value: Input
+        -
+          uuid: 6db4750a7d514e6795c36950528d176c
+          name: Morphological
+          type: DEPENDENT
+          key: viewpower.workstatus.workInfo.morphological
+          delay: '0'
+          trends: '0'
+          value_type: TEXT
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.workInfo.morphological
+          master_item:
+            key: viewpower.workstatus
+          tags:
+            -
+              tag: Component
+              value: UPS
+        -
+          uuid: b14b81a3b1d040c687772ee36768bb71
+          name: 'Output Current'
+          type: DEPENDENT
+          key: viewpower.workstatus.workInfo.outputCurrent
+          delay: '0'
+          value_type: FLOAT
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.workInfo.outputCurrent
+          master_item:
+            key: viewpower.workstatus
+          tags:
+            -
+              tag: Component
+              value: Output
+        -
+          uuid: 7c813679f1df4c72bf60492e6fc23b65
+          name: 'Output Frequency'
+          type: DEPENDENT
+          key: viewpower.workstatus.workInfo.outputFrequency
+          delay: '0'
+          value_type: FLOAT
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.workInfo.outputFrequency
+          master_item:
+            key: viewpower.workstatus
+          tags:
+            -
+              tag: Component
+              value: Output
+        -
+          uuid: c6aa0f1db5334208b51b53209a508c2f
+          name: 'Output Load Percent'
+          type: DEPENDENT
+          key: viewpower.workstatus.workInfo.outputLoadPercent
+          delay: '0'
+          value_type: FLOAT
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.workInfo.outputLoadPercent
+          master_item:
+            key: viewpower.workstatus
+          tags:
+            -
+              tag: Component
+              value: Output
+        -
+          uuid: 77bb9aa8a0024dee995cdfa35f4904d0
+          name: 'Output Voltage'
+          type: DEPENDENT
+          key: viewpower.workstatus.workInfo.outputVoltage
+          delay: '0'
+          value_type: FLOAT
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.workInfo.outputVoltage
+          master_item:
+            key: viewpower.workstatus
+          tags:
+            -
+              tag: Component
+              value: Output
+        -
+          uuid: 88fca3e69b3c47f3a3750fca9d569184
+          name: Temperature
+          type: DEPENDENT
+          key: viewpower.workstatus.workInfo.temperature
+          delay: '0'
+          value_type: FLOAT
+          units: C
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.workInfo.temperature
+          master_item:
+            key: viewpower.workstatus
+          tags:
+            -
+              tag: Component
+              value: UPS
+          triggers:
+            -
+              uuid: f3b831afa2ef47ef99e86fdc2d1ef6a2
+              expression: 'avg(/Template ViewPower by HTTP/viewpower.workstatus.workInfo.temperature,5)>{$UPS.TEMP.MAX.WARN}'
+              name: 'Temperature is high (temp > {$UPS.TEMP.MAX.WARN} C)'
+              priority: WARNING
+        -
+          uuid: 558d05216c404250bbab91676ab23e83
+          name: WorkMode
+          type: DEPENDENT
+          key: viewpower.workstatus.workInfo.workMode
+          delay: '0'
+          trends: '0'
+          value_type: TEXT
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.workInfo.workMode
+          master_item:
+            key: viewpower.workstatus
+          tags:
+            -
+              tag: Component
+              value: UPS
+      macros:
+        -
+          macro: '{$UPS.CAP.MAX.WARN}'
+          value: '80'
+        -
+          macro: '{$UPS.PORT}'
+          value: '15178'
+        -
+          macro: '{$UPS.TEMP.MAX.WARN}'
+          value: '40'
