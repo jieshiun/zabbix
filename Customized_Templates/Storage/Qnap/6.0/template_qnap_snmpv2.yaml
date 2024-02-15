@@ -1,0 +1,613 @@
+zabbix_export:
+  version: '6.0'
+  date: '2024-02-15T08:56:21Z'
+  groups:
+    -
+      uuid: 36bff6c29af64692839d077febfc7079
+      name: 'Templates/Network devices'
+  templates:
+    -
+      uuid: 885a0d4372ee474a87c167af2ce2dc5c
+      template: 'SNMP QNAP'
+      name: 'SNMP QNAP'
+      templates:
+        -
+          name: 'Template Net Network Generic Device SNMP'
+      groups:
+        -
+          name: 'Templates/Network devices'
+      items:
+        -
+          uuid: 6e6eae9f7b1d408f90cb39b5f2f8e15a
+          name: 'CPU Temperature'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.24681.1.4.1.1.1.1.4.2.0
+          key: cpu.temp
+          delay: 30m
+          history: 7d
+          trends: 7d
+          tags:
+            -
+              tag: Application
+              value: 'System Hardware'
+          triggers:
+            -
+              uuid: 0c6e6355554045728095ee565efbba76
+              expression: 'min(/SNMP QNAP/cpu.temp,15m)>={$CPU_TEMPERATURE_ALARM}'
+              name: 'High CPU temperature (>{$CPU_TEMPERATURE_ALARM} for 15m)'
+              opdata: 'Current temperature: {ITEM.VALUE}'
+              priority: WARNING
+              description: 'The CPU temperature is exceeding the threshold.'
+        -
+          uuid: ab61bab7994248068c1032953ed6b73a
+          name: 'Disk IOPS'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.24681.1.4.1.11.5.6.2.1.3.1
+          key: disk.iops
+          delay: 15m
+          history: 7d
+          trends: 7d
+          tags:
+            -
+              tag: Application
+              value: Disks
+        -
+          uuid: 8d4fa1a91b354350a0c72da549daf4bc
+          name: 'Disk latency'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.24681.1.4.1.11.5.6.2.1.4.1
+          key: disk.latency
+          delay: 15m
+          history: 7d
+          trends: 7d
+          tags:
+            -
+              tag: Application
+              value: Disks
+          triggers:
+            -
+              uuid: db974cda34ef4e6f96031a3a65fca724
+              expression: 'min(/SNMP QNAP/disk.latency,15m)>={$DISK_LATENCY_ALARM}'
+              name: 'Disk latency is high (>{$DISK_LATENCY_ALARM} for 15m)'
+              opdata: 'Current latency: {ITEM.VALUE}'
+              priority: WARNING
+              description: 'The latency of the disks are higher than the threshhold for 15 minutes.'
+        -
+          uuid: f1ef6099d8204d90ac8f02ab803ee481
+          name: 'System Temperature'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.24681.1.4.1.1.1.1.1.2.1.7.1
+          key: system.temp
+          delay: 30m
+          history: 7d
+          trends: 7d
+          tags:
+            -
+              tag: Application
+              value: 'System Hardware'
+      discovery_rules:
+        -
+          uuid: 0867077a19ec413894ef195ad2e5c2e5
+          name: 'Disk Discovery'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#HDDINDEX},1.3.6.1.4.1.24681.1.4.1.1.1.1.5.2.1.1]'
+          key: disk.discovery
+          delay: 15m
+          item_prototypes:
+            -
+              uuid: 107ce4c618d94eef88cc48f0affe813f
+              name: 'HDD {#HDDINDEX}: Capacity'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.24681.1.4.1.1.1.1.5.2.1.9.{#HDDINDEX}'
+              key: 'hdd.capacity[{#HDDINDEX}]'
+              delay: 1h
+              history: 7d
+              trends: 7d
+              units: B
+              tags:
+                -
+                  tag: Application
+                  value: Disks
+            -
+              uuid: 276c7f23ac6d42509f82d08a6da619d7
+              name: 'HDD {#HDDINDEX}: Model'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.24681.1.4.1.1.1.1.5.2.1.8.{#HDDINDEX}'
+              key: 'hdd.model[{#HDDINDEX}]'
+              delay: 1h
+              history: 7d
+              trends: '0'
+              value_type: TEXT
+              tags:
+                -
+                  tag: Application
+                  value: Disks
+            -
+              uuid: 50a0a0dcf21648dbba67efe7290c8fc2
+              name: 'HDD {#HDDINDEX}: Hot Spare'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.24681.1.4.1.1.1.1.5.2.1.7.{#HDDINDEX}'
+              key: 'hdd.spare[{#HDDINDEX}]'
+              delay: 1h
+              history: 7d
+              trends: 7d
+              valuemap:
+                name: 'QNAP Hot Spare'
+              tags:
+                -
+                  tag: Application
+                  value: Disks
+            -
+              uuid: c2564fd335cf44888803d61336732469
+              name: 'HDD {#HDDINDEX}: State'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.24681.1.3.11.1.4.{#HDDINDEX}'
+              key: 'hdd.state[{#HDDINDEX}]'
+              delay: 5m
+              history: 7d
+              trends: 7d
+              tags:
+                -
+                  tag: Application
+                  value: Disks
+              trigger_prototypes:
+                -
+                  uuid: daab396bc8934995bb4c5505ff7ed7cc
+                  expression: 'last(/SNMP QNAP/hdd.state[{#HDDINDEX}])=1'
+                  name: 'HDD {#HDDINDEX} (hotspare) is in operation'
+                  priority: WARNING
+                  description: 'Harddisk was previously a hot spare but is now in operation.'
+            -
+              uuid: 5ece10845ff749aaa0029323a857cff8
+              name: 'HDD {#HDDINDEX}: SMART Status'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.24681.1.4.1.1.1.1.5.2.1.5.{#HDDINDEX}'
+              key: 'hdd.status[{#HDDINDEX}]'
+              delay: 30m
+              history: 7d
+              trends: 7d
+              valuemap:
+                name: 'QNAP S.M.A.R.T State'
+              tags:
+                -
+                  tag: Application
+                  value: Disks
+              trigger_prototypes:
+                -
+                  uuid: 7a4fff8ffe594d8bb83bc960a5e9139b
+                  expression: 'last(/SNMP QNAP/hdd.status[{#HDDINDEX}])<>0'
+                  name: 'Faulty SMART state of HDD {#HDDINDEX}'
+                  opdata: 'Current state: {ITEM.LASTVALUE1}'
+                  priority: HIGH
+                  description: 'S.M.A.R.T has alerted a faulty state of the disk.'
+            -
+              uuid: 8fd27a4bce80451991162a1aa947e6d7
+              name: 'HDD {#HDDINDEX}: Temperature'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.24681.1.4.1.1.1.1.5.2.1.6.{#HDDINDEX}'
+              key: 'hdd.temp[{#HDDINDEX}]'
+              delay: 30m
+              history: 7d
+              trends: 7d
+              tags:
+                -
+                  tag: Application
+                  value: Disks
+              trigger_prototypes:
+                -
+                  uuid: 81bdd57b369d4971ad2a33de3f712127
+                  expression: 'min(/SNMP QNAP/hdd.temp[{#HDDINDEX}],15m)>{$HDD_TEMPERATURE_ALARM}'
+                  name: 'Temperature of HDD {#HDDINDEX} is excessive for 15m'
+                  opdata: 'Current temperature: {ITEM.VALUE}'
+                  priority: WARNING
+                  description: 'Harddisk temperature is higher than the threshold for 15 minutes.'
+                  dependencies:
+                    -
+                      name: 'Temperature of HDD {#HDDINDEX} is high for 5m'
+                      expression: 'min(/SNMP QNAP/hdd.temp[{#HDDINDEX}],5m)>{$HDD_TEMPERATURE_ALARM}'
+                -
+                  uuid: b109aa2759624b3eb92cb4a10e6d8d7c
+                  expression: 'min(/SNMP QNAP/hdd.temp[{#HDDINDEX}],5m)>{$HDD_TEMPERATURE_ALARM}'
+                  name: 'Temperature of HDD {#HDDINDEX} is high for 5m'
+                  opdata: 'Current temperature: {ITEM.VALUE}'
+                  priority: INFO
+                  description: 'Harddisk temperature is higher than the threshold for 5 minutes.'
+        -
+          uuid: 3c1513047d9c4e448e9182708efb7e54
+          name: 'FAN Discovery'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#FANINDEX},1.3.6.1.4.1.24681.1.4.1.1.1.1.2.2.1.1]'
+          key: fan.discovery
+          delay: 15m
+          item_prototypes:
+            -
+              uuid: 626bfb3696e7424d80600df20e7fc452
+              name: 'FAN {#FANINDEX}: Name'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.24681.1.3.15.1.2.{#FANINDEX}'
+              key: 'fan.name[{#FANINDEX}]'
+              delay: 1h
+              history: 7d
+              trends: '0'
+              value_type: TEXT
+              tags:
+                -
+                  tag: Application
+                  value: 'System Hardware'
+            -
+              uuid: 3ca8297648354f5aa9f9631847457e31
+              name: 'FAN {#FANINDEX}: Speed'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.24681.1.4.1.1.1.1.2.2.1.5.{#FANINDEX}'
+              key: 'fan.speed[{#FANINDEX}]'
+              delay: 30m
+              history: 7d
+              trends: 7d
+              tags:
+                -
+                  tag: Application
+                  value: 'System Hardware'
+            -
+              uuid: 836b153a80e548bfa05c6e1b7e0a394e
+              name: 'FAN {#FANINDEX}: Status'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.24681.1.4.1.1.1.1.2.2.1.4.{#FANINDEX}'
+              key: 'fan.status[{#FANINDEX}]'
+              delay: 30m
+              history: 7d
+              trends: 7d
+              valuemap:
+                name: 'Alarm state'
+              tags:
+                -
+                  tag: Application
+                  value: 'System Hardware'
+        -
+          uuid: 6bbef3e4fead4c73b6706a867e25f421
+          name: 'LUN Discovery'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#LUNINDEX},1.3.6.1.4.1.24681.1.4.1.1.2.1.11.2.1.1]'
+          key: lun.discovery
+          delay: 15m
+          item_prototypes:
+            -
+              uuid: aaa50fb7cded4061af6b69df766fd0d0
+              name: 'LUN {#LUNINDEX}: Name'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.24681.1.4.1.1.2.1.11.2.1.3.{#LUNINDEX}'
+              key: 'lun.name[{#LUNINDEX}]'
+              delay: 1h
+              history: 7d
+              trends: '0'
+              value_type: TEXT
+              tags:
+                -
+                  tag: Application
+                  value: 'iSCSI & LUN'
+            -
+              uuid: fc1b19f140eb4059b387661c9884aae4
+              name: 'LUN {#LUNINDEX}: Status'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.24681.1.4.1.1.2.1.11.2.1.5.{#LUNINDEX}'
+              key: 'lun.status[{#LUNINDEX}]'
+              delay: 15m
+              history: 7d
+              trends: 7d
+              valuemap:
+                name: 'QNAP LUN Status'
+              tags:
+                -
+                  tag: Application
+                  value: 'iSCSI & LUN'
+              trigger_prototypes:
+                -
+                  uuid: 18dac016287544169873ba2e78622e16
+                  expression: 'last(/SNMP QNAP/lun.status[{#LUNINDEX}])<0'
+                  name: 'State of LUN {#LUNINDEX} is disconnected'
+                  priority: WARNING
+                  description: 'The target of LUN is disconnected.'
+        -
+          uuid: 3139a2fcb8ee42e2a99f42993871682e
+          name: 'Pool Discovery'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#POOLINDEX},1.3.6.1.4.1.24681.1.4.1.1.1.2.2.2.1.1]'
+          key: pool.discovery
+          delay: 15m
+          item_prototypes:
+            -
+              uuid: 9ed0e282c1794d7886ffd16233814d0c
+              name: 'Pool {#POOLINDEX}: Capacity'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.24681.1.4.1.1.1.2.2.2.1.3.{#POOLINDEX}'
+              key: 'pool.capacity[{#POOLINDEX}]'
+              delay: 15m
+              history: 7d
+              trends: 7d
+              units: B
+              tags:
+                -
+                  tag: Application
+                  value: Pools
+            -
+              uuid: ad96bfcac7bd475882a6e8641e983035
+              name: 'Pool {#POOLINDEX}: Free size in %'
+              type: CALCULATED
+              key: 'pool.freepercentage[{#POOLINDEX}]'
+              delay: 15m
+              history: 7d
+              trends: 7d
+              params: 'last(//pool.freeSize[{#POOLINDEX}])/last(//pool.capacity[{#POOLINDEX}])*100'
+              tags:
+                -
+                  tag: Application
+                  value: Pools
+              trigger_prototypes:
+                -
+                  uuid: d4ebe82e4fa546c3b3e3b0e3c5aa1c9f
+                  expression: 'last(/SNMP QNAP/pool.freepercentage[{#POOLINDEX}])<{$POOL_SIZE_ALARM}'
+                  name: 'Reaching threshold for pool {#POOLINDEX} (<{$POOL_SIZE_ALARM}%)'
+                  opdata: 'Current %: {ITEM.LASTVALUE1}'
+                  priority: WARNING
+                  description: 'The free size of the pool is reaching the threshold.'
+            -
+              uuid: 71fa6049f2ea4c889b979eb79d63fe90
+              name: 'Pool {#POOLINDEX}: Free size'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.24681.1.4.1.1.1.2.2.2.1.4.{#POOLINDEX}'
+              key: 'pool.freeSize[{#POOLINDEX}]'
+              delay: 15m
+              history: 7d
+              trends: 7d
+              units: B
+              tags:
+                -
+                  tag: Application
+                  value: Pools
+            -
+              uuid: 571853205284437a8fbdea52fa7df78d
+              name: 'Pool {#POOLINDEX}: Status'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.24681.1.4.1.1.1.2.2.2.1.5.{#POOLINDEX}'
+              key: 'pool.status[{#POOLINDEX}]'
+              delay: 15m
+              history: 7d
+              trends: 7d
+              tags:
+                -
+                  tag: Application
+                  value: Pools
+              trigger_prototypes:
+                -
+                  uuid: 161a739c4e034747b778965b5285a3f4
+                  expression: 'last(/SNMP QNAP/pool.status[{#POOLINDEX}])<>0'
+                  name: 'Faulty state of Pool {#POOLINDEX}'
+                  priority: HIGH
+                  description: 'A faulty state has been reported by the pool.'
+        -
+          uuid: 23bc4d40f97f47dc93496043c5c9ebe4
+          name: 'RAID Discovery'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#RAIDINDEX},1.3.6.1.4.1.24681.1.4.1.1.1.2.1.2.1.1]'
+          key: raid.discovery
+          delay: 15m
+          item_prototypes:
+            -
+              uuid: 34d28b460c8a412aaf4d0d83b5744510
+              name: 'RAID {#RAIDINDEX}: Capacity'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.24681.1.4.1.1.1.2.1.2.1.3.{#RAIDINDEX}'
+              key: 'raid.capacity[{#RAIDINDEX}]'
+              delay: 1h
+              history: 7d
+              trends: 7d
+              units: B
+              tags:
+                -
+                  tag: Application
+                  value: RAID
+            -
+              uuid: 7ebe11d6e89b49ff861414e7f9a527aa
+              name: 'RAID {#RAIDINDEX}: Free size'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.24681.1.4.1.1.1.2.1.2.1.4.{#RAIDINDEX}'
+              key: 'raid.freeSize[{#RAIDINDEX}]'
+              delay: 1h
+              history: 7d
+              trends: 7d
+              units: B
+              tags:
+                -
+                  tag: Application
+                  value: RAID
+            -
+              uuid: f625c511d6204351b720e4391b4740b1
+              name: 'RAID {#RAIDINDEX}: Level'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.24681.1.4.1.1.1.2.1.2.1.7.{#RAIDINDEX}'
+              key: 'raid.level[{#RAIDINDEX}]'
+              delay: 1h
+              history: 7d
+              trends: 7d
+              tags:
+                -
+                  tag: Application
+                  value: RAID
+            -
+              uuid: 618b58d70bfa404b8cb16d662e9c5552
+              name: 'RAID {#RAIDINDEX}: State'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.24681.1.4.1.1.1.2.1.2.1.5.{#RAIDINDEX}'
+              key: 'raid.state[{#RAIDINDEX}]'
+              delay: 15m
+              history: 7d
+              trends: '0'
+              value_type: TEXT
+              tags:
+                -
+                  tag: Application
+                  value: RAID
+              trigger_prototypes:
+                -
+                  uuid: aeb74e115abc4a82beb5daf332eb968c
+                  expression: 'find(/SNMP QNAP/raid.state[{#RAIDINDEX}],,"iregexp","^Ready|Synchronizing")=0'
+                  name: 'Faulty state of RAID {#RAIDINDEX}'
+                  opdata: 'Current state: {ITEM.VALUE}'
+                  priority: HIGH
+                  description: 'RAID has reported a faulty state.'
+                  manual_close: 'YES'
+        -
+          uuid: b1efa783fc35440dabf5f305bc8aed60
+          name: 'Volume Discovery'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#VOLUMEINDEX},1.3.6.1.4.1.24681.1.4.1.1.1.2.3.2.1.1]'
+          key: volume.discovery
+          delay: 15m
+          item_prototypes:
+            -
+              uuid: c73140c3ef034313879d5e97dbe85e5b
+              name: 'Volume {#VOLUMEINDEX}: Capacity'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.24681.1.4.1.1.1.2.3.2.1.3.{#VOLUMEINDEX}'
+              key: 'volume.capacity[{#VOLUMEINDEX}]'
+              delay: 15m
+              history: 7d
+              trends: 7d
+              units: B
+              tags:
+                -
+                  tag: Application
+                  value: Volumes
+            -
+              uuid: 78b3bc90f1ee4c1a94866db899da7930
+              name: 'Volume {#VOLUMEINDEX}: Free size in %'
+              type: CALCULATED
+              key: 'volume.freePercentage[{#VOLUMEINDEX}]'
+              delay: 15m
+              history: 7d
+              trends: 7d
+              params: 'last(//volume.freeSize[{#VOLUMEINDEX}])/last(//volume.capacity[{#VOLUMEINDEX}])*100'
+              tags:
+                -
+                  tag: Application
+                  value: Volumes
+              trigger_prototypes:
+                -
+                  uuid: 6032760fad9f4b509714ff52a93729dc
+                  expression: 'last(/SNMP QNAP/volume.freePercentage[{#VOLUMEINDEX}])<{$VOLUME_SIZE_ALARM}'
+                  name: 'Reaching threshold for volume {#VOLUMEINDEX} (<{$VOLUME_SIZE_ALARM}%)'
+                  opdata: 'Current state: {ITEM.LASTVALUE1}'
+                  priority: WARNING
+                  description: 'The free size of the volume is reaching the threshold.'
+            -
+              uuid: 4f7983feeda649b39a3549bc3877f1c4
+              name: 'Volume {#VOLUMEINDEX}: Free size'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.24681.1.4.1.1.1.2.3.2.1.4.{#VOLUMEINDEX}'
+              key: 'volume.freeSize[{#VOLUMEINDEX}]'
+              delay: 15m
+              history: 7d
+              trends: 7d
+              units: B
+              tags:
+                -
+                  tag: Application
+                  value: Volumes
+            -
+              uuid: ef01a7c2e7834ca0baeef5e5095880f7
+              name: 'Volume {#VOLUMEINDEX}: Name'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.24681.1.4.1.1.1.2.3.2.1.8.{#VOLUMEINDEX}'
+              key: 'volume.name[{#VOLUMEINDEX}]'
+              delay: 1h
+              history: 7d
+              trends: '0'
+              value_type: TEXT
+              tags:
+                -
+                  tag: Application
+                  value: Volumes
+            -
+              uuid: 257ad648dc9b4001b3ee684484ec03ae
+              name: 'Volume {#VOLUMEINDEX}: Status'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.24681.1.4.1.1.1.2.3.2.1.5.{#VOLUMEINDEX}'
+              key: 'volume.status[{#VOLUMEINDEX}]'
+              delay: 15m
+              history: 7d
+              trends: '0'
+              value_type: TEXT
+              tags:
+                -
+                  tag: Application
+                  value: Volumes
+              trigger_prototypes:
+                -
+                  uuid: 7fd46dc566464620a6b8214b98994dcd
+                  expression: 'last(/SNMP QNAP/volume.status[{#VOLUMEINDEX}])<>0'
+                  name: 'Faulty state of volume {#VOLUMEINDEX}'
+                  priority: DISASTER
+                  description: 'Volume is in a faulty state. Check as soon as possible.'
+      macros:
+        -
+          macro: '{$CPU_TEMPERATURE_ALARM}'
+          value: '65'
+          description: 'Amount in centigrade when an alarm shall be raised'
+        -
+          macro: '{$DISK_LATENCY_ALARM}'
+          value: '30'
+          description: 'Amount in ms when an alarm shall be raised'
+        -
+          macro: '{$HDD_TEMPERATURE_ALARM}'
+          value: '50'
+          description: 'Amount in centigrade when an alarm shall be raised'
+        -
+          macro: '{$POOL_SIZE_ALARM}'
+          value: '15'
+          description: 'Amount in % when an alarm shall be raised'
+      valuemaps:
+        -
+          uuid: c63a7cd3914046c6b6c422164ff9f98f
+          name: 'Alarm state'
+          mappings:
+            -
+              value: '0'
+              newvalue: Ok
+            -
+              value: '1'
+              newvalue: Alarm
+        -
+          uuid: c5ae3517115b45e596cb9b5ac48a2fd5
+          name: 'QNAP Hot Spare'
+          mappings:
+            -
+              value: '0'
+              newvalue: 'No'
+            -
+              value: '1'
+              newvalue: 'Yes'
+        -
+          uuid: f5768d3b380f40109a739e55e7dc6af7
+          name: 'QNAP LUN Status'
+          mappings:
+            -
+              value: '0'
+              newvalue: Disconnected
+            -
+              value: '1'
+              newvalue: Connected
+        -
+          uuid: a3cace379264490cbd96ba3f7719f5f6
+          name: 'QNAP S.M.A.R.T State'
+          mappings:
+            -
+              value: '-1'
+              newvalue: Error
+            -
+              value: '0'
+              newvalue: Good
+            -
+              value: '1'
+              newvalue: Warning
+            -
+              value: '2'
+              newvalue: Abnormal
